@@ -1,0 +1,33 @@
+#include"mesh.h"
+#include<vector>
+#include<cstdio>
+#include<fstream>
+#include<cmath>
+
+double PI = std::atan(1.0) * 4.0;
+
+int main(){
+
+  //Declare parameters of the problem
+  int ncells = 100;
+  double x_min = -1.0;
+  double x_max = 1.0;
+
+  //Initial condition function  
+  W_state f(double x)
+ {
+   W_state->u = 
+ }
+
+  //Boundary condition function
+  
+  
+
+
+
+
+
+
+
+
+}

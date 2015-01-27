@@ -1,0 +1,48 @@
+#ifndef EULER_H
+#define EULER_H
+
+
+class Euler{
+
+  //Data members
+  double gamma;
+  
+  struct W_state{
+    double rho;
+    double u;
+    double P;
+    void print()const;
+    W_state();
+    W_state(double rho, double u, double P);
+  };
+  
+  struct U_state{
+    double rho;
+    double momentum;
+    double energy;
+    void print()const;
+    U_state();
+    U_state(double rho, double momentum, double energy);
+  };
+
+  //Constructors; 
+  Euler();
+  Euler(double rho, double u, double P);
+  //Euler(double rho, double momentum, double energy);
+
+  //Member functions
+  double a();//Calculate speed of sound a=sqrt(gamma*P/rho);
+  double a(U_state u);
+  double a(W_state w);
+
+  double int_energy(W_state);
+  
+  U_state flux(U_state);
+  
+  U_state CfromP(W_state);
+  W_state PfromC(U_state);
+
+  
+};
+
+#endif

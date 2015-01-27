@@ -1,0 +1,59 @@
+#include<vector>
+#include"mesh.h"
+#include<fstream>
+#include<cmath>
+#include<iostream> 
+
+W_state::W_state() : u(0) {}
+
+W_state::W_state(double u) : u(u) {}
+
+void W_state::print()const
+{
+  std::cout << "State u = " << u << "\n";
+}
+
+Mesh::Mesh(int ncells, double x_min, double x_max, W_state (*f)(double x), W_state (*b1)(Mesh &m), W_state (*b2)(Mesh &m), int nGhost) : ncells(ncells), x_min(x_min),x_max(x_max), time(0), boundary1(b1), boundary2(b2), nGhost(nGhost)
+ { 
+   dx = (x_max-x_min)/(double)ncells;
+   
+   data.resize(ncells + 2*nGhost);
+   data2.resize(ncells + 2*nGhost);
+   axis.resize(ncells + 2*nGhost);
+   
+   std::vector<W_state>::iterator itdata = data.begin()+nGhost;
+   std::vector<W_state>::iterator itdata2= data2.begin()+nGhost;
+   std::vector<double>::iterator itaxis= axis.begin()+nGhost;
+   
+   for(int i = 0; i<ncells; i++){
+     (*itaxis) = x_min + i*dx;
+     (*itdata) = f(*itaxis);
+     itaxis++;
+     itdata++;
+   }
+
+ }
+
+
+
+/*
+void main (){
+
+  double domain_lenght = 2.0;
+  int ncells = 100;
+  doule mesh_size = domain_length/(ncells-1);
+  
+  double cfl = 0.9;
+  double a = 0.5;
+  double dt = cfl*mesh_size/a;
+
+  std::vector<double> solution(ncells);
+
+  for(std::vector<double>::iterator it = solution.begin(); it != solution.end();it++){
+    *it = sin(2
+  
+
+
+
+}
+*/

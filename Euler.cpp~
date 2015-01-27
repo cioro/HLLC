@@ -1,0 +1,27 @@
+#include"Euler.hpp"
+#include<vector>
+#include<cmath>
+#include<iostream>
+
+Euler::W_state::W_state() : rho(0), u(0), P(0) {}
+
+Euler::W_state::W_state(double rho, double u, double P) : rho(rho), u(u), P(P) {}
+
+void Euler::W_state::print()const {
+  std::cout << " rho\t " << rho << "\t u \t " << u << " \t P \t" << P << "\n";
+
+}
+
+
+Euler::U_state::U_state() : rho(0), momentum(0), energy(0) {}
+
+Euler::U_state::U_state(double rho, double momentum, double energy) :\
+ rho(rho), momentum(momentum), energy(energy) {}
+
+void Euler::U_state::print()const {
+  std::cout << " rho \t " << rho << "\t momentum \t " << momentum \
+ << " \t energy \t" << energy << "\n";
+
+}
+
+

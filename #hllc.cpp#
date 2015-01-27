@@ -1,0 +1,120 @@
+
+void riemann_solver_HLLC_ideal_const :: solve_RP(blitz::Array<double,1> UL, blitz::Array<double,1> UR, const ESP_EOS_stencil_base* EOS_data)
+{
+
+  assert( UL.size()==4 );
+  assert( UR.size()==4 );
+
+
+  // gamma_L and gamma_R are both set in constructor
+
+fg
+
+  const double rho_L = UL(0);
+  const double u_L = UL(1)/rho_L;
+  const double v_L = UL(2)/rho_L;
+  const double p_L = (gamma - 1)*(UL(3) - 0.5*rho_L*(u_L*u_L + v_L*v_L));
+
+  const double rho_R = UR(0);
+  const double u_R = UR(1)/rho_R;
+  const double v_R = UR(2)/rho_R;
+  const double p_R = (gamma - 1)*(UR(3) - 0.5*rho_R*(u_R*u_R + v_R*v_R));
+
+
+
+  /*
+   * This is the PVRS scheme to estimate pressure in the star region
+   */
+  double a_L = sqrt((gamma*p_L)/rho_L);
+  double a_R = sqrt((gamma*p_R)/rho_R);
+  double p_pvrs = 0.5*(p_L + p_R) - 0.5*(u_R - u_L)*0.5*(rho_L + rho_R)*0.5*(a_L + a_R);
+  double p_star = std::max(0.0, p_pvrs);
+  assert(p_star>=0.0);
+
+
+
+  // Wave speed estimates
+  S_(0) = u_L - a_L*q_K(p_star, p_L);
+  S_(2) = u_R + a_R*q_K(p_star, p_R);
+  S_(1) = (p_R-p_L+rho_L*u_L*(S_(0)-u_L)-rho_R*u_R*(S_(2)-u_R))/(rho_L*(S_(0)-u_L)-rho_R*(S_(2)-u_R));
+  assert( !isnan(S_(0)));
+  assert( !isnan(S_(1)));
+  assert( !isnan(S_(2)));
+
+
+
+  // Set values all four states
+  U_(0, blitz::Range::all()) = UL;
+  U_(3, blitz::Range::all()) = UR;
+
+  double factor_L = rho_L*((S_(0)-u_L)/(S_(0)-S_(1)));
+  double factor_R = rho_R*((S_(2)-u_R)/(S_(2)-S_(1)));
+
+  U_(1,0) = factor_L;
+  U_(1,1) = factor_L*S_(1);
+  U_(1,2) = factor_L*v_L;
+  U_(1,3) = factor_L*((UL(3)/rho_L) + ((S_(1)-u_L)*(S_(1)+(p_L/(rho_L*(S_(0)-u_L))))));
+
+  U_(2,0) = factor_R;
+  U_(2,1) = factor_R*S_(1);
+  U_(2,2) = factor_R*v_R;
+  U_(2,3) = factor_R*((UR(3)/rho_R) + ((S_(1)-u_R)*(S_(1)+(p_R/(rho_R*(S_(2)-u_R))))));
+
+
+
+  // Set values of HLLC flux
+  F_(0, blitz::Range::all()) = flux(UL);
+  F_(3, blitz::Range::all()) = flux(UR);
+  F_(1, blitz::Range::all()) = F_(0, blitz::Range::all()) + S_(0)*(U_(1,blitz::Range::all()) - UL);
+  F_(2, blitz::Range::all()) = F_(3, blitz::Range::all()) + S_(2)*(U_(2,blitz::Range::all()) - UR);
+
+
+
+  double S_L = S_(0);
+  double S_star = S_(1);
+  double S_R = S_(2);
+
+
+
+  // Fill the member variables with appropriate values which lie on x/t=0 characteristic
+  if (0.0 <= S_L)
+    {
+      flux = F_(0,blitz::Range::all());
+      u_star = u_L;
+      v_star = v_L;
+      E_star = UL(3);
+      p_star = p_L;
+    }
+  else if (S_L <= 0.0 && 0.0 <= S_star)
+    {
+      flux = F_(1,blitz::Range::all());
+      u_star = S_star;
+      v_star = v_L;
+      E_star = U_(1,3)/U(1,0);
+      P_star = p_star;
+    }
+  else if (S_star <= 0.0 && 0.0 <= S_R)
+    {
+      flux = F_(2,blitz::Range::all());
+      u_star = S_star;
+      v_star = v_R;
+      E_star = U_(2,3)/U(2,0);
+      P_star = p_star;
+    }
+  else if (0.0 >= S_R)
+    {
+      flux = F_(3,blitz::Range::all());
+      u_star = u_R;
+      v_star = v_R;
+      E_star = UR(3);
+      P_star = p_R;
+    }
+  else
+    {
+      // ERROR
+      std::cout << "Error in computing the HLLC fluc";
+      std::exit(11);
+    }
+
+
+}

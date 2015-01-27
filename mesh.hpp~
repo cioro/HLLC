@@ -1,0 +1,41 @@
+#ifndef MESH_H
+#define MESH_H
+
+#include<cstdio>
+
+struct W_state{
+  double u;
+  void print()const;
+  W_state();
+  W_state(double u);
+};
+
+class Mesh{
+public:
+  Mesh(int ncells, double x_min, double x_max, W_state (*f)(double x), W_state (*b1)(Mesh &m), W_state (*b2)(Mesh &m), int nGhost);
+  ~Mesh();
+  void print()const;
+  void save(char *name, s
+  
+
+   //Data
+  std::vector<W_state> data;
+  std::vector<W_state> data2;
+  
+  //Parameters
+  std::vector<double> axis;
+  int ncells;
+  double x_min;
+  double x_max;
+  double dx;
+  double time;
+  
+  //Boundary functions
+  int nGhost;
+
+  
+
+
+};
+
+

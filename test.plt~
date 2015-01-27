@@ -1,0 +1,16 @@
+set term postscript landscape enhanced colour size 10,7
+
+set xrange [ -1.0 : 1.0 ]
+set nokey
+set lmargin 10
+set rmargin 2
+set pointsize 0.5
+
+set ylabel "u(x)"
+set size 0.5,0.45
+set origin 0.0,0.0
+set bmargin 1
+set tmargin 0
+set format x ""
+set xlabel "x"
+plot "solution.dat0" u 1:2 w p pt 19, 

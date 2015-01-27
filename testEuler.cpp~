@@ -1,0 +1,19 @@
+#include"Euler.hpp"
+#include<iostream>
+
+int main(){
+
+  double rho = 1.0  ;
+  double u = 0.75 ;
+  double P = 1.0;
+  
+    
+
+  Euler::W_state w;
+  w(rho,u,P);
+  w.print();
+  //uble speed = Euler::a(w);
+  //std::cout << "The speed of sound is " << speed << "\n";
+  
+
+}
