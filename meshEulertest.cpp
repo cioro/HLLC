@@ -86,6 +86,14 @@ Euler::U_state initial(double x){
 
 //Exact riemann solver function
 
+Euler::U_state Exact_solver(double x){
+
+  Euler::U_state u_empty;
+
+  return u_empty;
+}
+
+
 int main(){
 
   //Initialise mesh with reflective BC
@@ -105,7 +113,5 @@ int main(){
   //Calculate dt
 
   //Print dt
-
-
 
 }
